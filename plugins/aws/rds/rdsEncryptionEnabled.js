@@ -71,7 +71,7 @@ module.exports = {
                     if (!listTagsForResource || listTagsForResource.err) {
                         var tagErr = helpers.addError(listTagsForResource);
                         if (tagErr !== 'The TagList does not exist') {
-                            helpers.addResult(results, 3, `Error querying instances tags for ${dbName}: ${helpers.addError(listTagsForResource)}`, 'global', dbResource);
+                            helpers.addResult(results, 3, `Error querying instances tags for ${db.DBName}: ${helpers.addError(listTagsForResource)}`, 'global', dbResource);
                         }
                         return dcb();
                     }
