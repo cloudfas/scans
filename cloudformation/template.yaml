@@ -130,3 +130,11 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Ref BucketName
+
+
+Outputs:
+  CloudsploutLambdaArn:
+    Value: !GetAtt CloudsploitScanner.Arn
+
+  CloudsploutLambdaName:
+    Value: !Ref CloudsploitScanner
