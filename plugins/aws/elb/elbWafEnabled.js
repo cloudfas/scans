@@ -67,7 +67,7 @@ module.exports = {
                     if (!listResources || listResources.err || !listResources.data) {
                         helpers.addResult(results, 3,
                             'Unable to query for WAf Resources: ' + helpers.addError(listResources), region, webACLId);
-                        return;
+                        return rcb();
                     }
 
                     if (listResources.data.ResourceArns) {
