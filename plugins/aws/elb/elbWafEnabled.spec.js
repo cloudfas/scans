@@ -130,7 +130,7 @@ var exampleLoadBalancerError = {
 
 describe('elbWafEnabled', function () {
     describe('run', function () {
-        it('should succeed when all ELB have waf enabled.', function (done) {
+        it('should PASS when all ELB have waf enabled.', function (done) {
             const cache = createCache({data: [exampleLoadBalancerEnabled]}, nonEmptyWaf)
 
             const callback = (err, results) => {
