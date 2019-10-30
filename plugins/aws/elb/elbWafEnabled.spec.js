@@ -212,7 +212,7 @@ describe('elbWafEnabled', function () {
                 console.log(results)
                 expect(results.length).to.equal(2)
                 expect(results[0].status).to.equal(3) //due to error returned
-                expect(results[1].status).to.equal(2) //overall failed since no WAF had error.
+                expect(results[1].status).to.equal(2) //overall failed since WAF had error.
                 done()
             }
 
