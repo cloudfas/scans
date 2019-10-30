@@ -45,7 +45,7 @@ module.exports = {
                 // loop through listeners
                 var non_tls_listener = [];
                 lb.ListenerDescriptions.forEach(function(listener){
-                    // if it is not https add errors to results
+                    // if it is not TLS add protocol and port.
                     if(!(listener.PolicyNames.includes("ELBSecurityPolicy-TLS-1-1-2017-01") || listener.PolicyNames.includes("ELBSecurityPolicy-TLS-1-2-2017-01"))) {
                         non_tls_listener.push(
                             listener.Listener.Protocol + ' / ' +
@@ -54,7 +54,7 @@ module.exports = {
                     }
                 });
                 if (non_tls_listener){
-                    //helpers.addResult(results, 2, non_https_listner.join(', '), region);
+                    //helpers.addResult(results, 2, non_tls_listener.join(', '), region);
                     msg = "The following listeners are not using TSL 1.1 or above: ";
                     helpers.addResult(
                         results, 2, msg + non_tls_listener.join(', '), region, elbArn
