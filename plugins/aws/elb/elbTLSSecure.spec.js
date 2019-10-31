@@ -57,6 +57,8 @@ var ELBwithHTTPSListener = (policy) => {
 var ELB11Policy = "ELBSecurityPolicy-TLS-1-1-2017-01"
 var ELB12Policy = "ELBSecurityPolicy-TLS-1-2-2017-01"
 var ELBNo11Policy = "ELBSecurityPolicy-2016-08"
+var customApprovedPolicy = "MyapprovedPolicy"
+
 
 var ELBwithError = {
     err: {
@@ -145,6 +147,18 @@ describe('elbTLSSecure', function () {
             }
 
             process.nextTick(() => { elbTLSSecure.run(cache, {}, callback) })
+        })
+
+        it('should PASS when an ELB contains a custom policy from Settings.', function (done) {
+            const cache = createCache({data: [ELBwithHTTPSListener(customApprovedPolicy)]})
+
+            const callback = (err, results) => {
+                expect(results.length).to.equal(1)
+                expect(results[0].status).to.equal(0)
+                done()
+            }
+
+            process.nextTick(() => { elbTLSSecure.run(cache, {customELBPolicies:[customApprovedPolicy]}, callback) })
         })
     })
 })

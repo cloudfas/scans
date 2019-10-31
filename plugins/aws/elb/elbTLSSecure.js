@@ -15,6 +15,7 @@ module.exports = {
         var results = [];
         var source = {};
         var regions = helpers.regions(settings);
+        var customPolicies = settings.customELBPolicies
 
         var acctRegion = helpers.defaultRegion(settings);
         var accountId = helpers.addSource(cache, source, ['sts', 'getCallerIdentity', acctRegion, 'data']);
@@ -46,7 +47,16 @@ module.exports = {
                 var non_tls_listener;
                 lb.ListenerDescriptions.forEach(function(listener){
                     // if it is not TLS add protocol and port.
-                    if((!listener.PolicyNames.includes("ELBSecurityPolicy-TLS-1-1-2017-01") && !listener.PolicyNames.includes("ELBSecurityPolicy-TLS-1-2-2017-01"))) {
+                    var containsCustomValidPolicy = false
+                    if(customPolicies) {
+                        customPolicies.forEach((policy) => {
+                            if(listener.PolicyNames.includes(policy)) {
+                                containsCustomValidPolicy = true
+                            }
+                        })
+                    }
+
+                    if((!listener.PolicyNames.includes("ELBSecurityPolicy-TLS-1-1-2017-01") && !listener.PolicyNames.includes("ELBSecurityPolicy-TLS-1-2-2017-01") && !containsCustomValidPolicy)) {
                         non_tls_listener =
                             listener.Listener.Protocol + ' / ' +
                             listener.Listener.LoadBalancerPort
