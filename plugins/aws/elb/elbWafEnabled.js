@@ -58,18 +58,15 @@ module.exports = {
                 };
 
                 listWebACLs.data.forEach(webACL => {
-
                     var webACLId = webACL.WebACLId;
 
                     var listResources = helpers.addSource(cache, source,
                         ['wafregional', 'listResourcesForWebACL', region, webACLId]);
-
                     if (!listResources || listResources.err || !listResources.data) {
                         helpers.addResult(results, 3,
-                            'Unable to query for WAf Resources: ' + helpers.addError(listResources), region, webACLId);
+                            'Unable to query for WAF Resources: ' + helpers.addError(listResources), region, webACLId);
                         return;
                     }
-
                     if (listResources.data.ResourceArns) {
                         listResources.data.ResourceArns.forEach(resourceARN => {
                             var resourceType = resourceARN.split(':')[2];
@@ -81,7 +78,6 @@ module.exports = {
                         });
                     };
                 });
-
                 rcb();
             }, function() {
                 if (myResourceArns.length) {

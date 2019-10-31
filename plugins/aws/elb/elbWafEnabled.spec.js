@@ -130,7 +130,7 @@ var exampleLoadBalancerError = {
 
 describe('elbWafEnabled', function () {
     describe('run', function () {
-        it('should PASS when all ELB have waf enabled.', function (done) {
+        it('should PASS when all ELBs have WAF enabled.', function (done) {
             const cache = createCache({data: [exampleLoadBalancerEnabled]}, nonEmptyWaf)
 
             const callback = (err, results) => {
@@ -139,10 +139,10 @@ describe('elbWafEnabled', function () {
                 done()
             }
 
-            elbWafEnabled.run(cache, {}, callback)
+            process.nextTick(() => { elbWafEnabled.run(cache, {}, callback) })
         })
 
-        it('should FAIL when an ELB does not have waf enabled.', function (done) {
+        it('should FAIL when an ELB does not have WAF enabled.', function (done) {
             const cache = createCache({data: [exampleLoadBalancerNotEnabled]}, nonEmptyWaf)
 
             const callback = (err, results) => {
@@ -151,7 +151,7 @@ describe('elbWafEnabled', function () {
                 done()
             }
 
-            elbWafEnabled.run(cache, {}, callback)
+            process.nextTick(() => { elbWafEnabled.run(cache, {}, callback) })
         })
 
         it('should PASS when no ELBs are defined', function (done) {
@@ -164,10 +164,10 @@ describe('elbWafEnabled', function () {
                 done()
             }
 
-            elbWafEnabled.run(cache, {}, callback)
+            process.nextTick(() => { elbWafEnabled.run(cache, {}, callback) })
         })
 
-        it('should FAIL when an ELB does not have waf enabled but one does.', function (done) {
+        it('should FAIL when an ELB does not have WAF enabled but one does.', function (done) {
             const cache = createCache({data: [exampleLoadBalancerNotEnabled,exampleLoadBalancerEnabled]}, nonEmptyWaf)
 
             const callback = (err, results) => {
@@ -176,7 +176,7 @@ describe('elbWafEnabled', function () {
                 done()
             }
 
-            elbWafEnabled.run(cache, {}, callback)
+            process.nextTick(() => { elbWafEnabled.run(cache, {}, callback) })
         })
 
         it('should FAIL when an ELB has an error.', function (done) {
@@ -189,7 +189,7 @@ describe('elbWafEnabled', function () {
                 done()
             }
 
-            elbWafEnabled.run(cache, {}, callback)
+            process.nextTick(() => { elbWafEnabled.run(cache, {}, callback) })
         })
 
         it('should FAIL when ELB exists with no WAF.', function (done) {
@@ -198,25 +198,23 @@ describe('elbWafEnabled', function () {
             const callback = (err, results) => {
                 expect(results.length).to.equal(2)
                 expect(results[0].status).to.equal(0)
-                expect(results[1].status).to.equal(2) //overall failed since no WAF found.
+                expect(results[1].status).to.equal(2) //overall FAILed since no WAF found.
                 done()
             }
-
-            elbWafEnabled.run(cache, {}, callback)
+            process.nextTick(() => { elbWafEnabled.run(cache, {}, callback) })
         })
 
         it('should FAIL when an WAF has an error.', function (done) {
             const cache = createCache({data: [exampleLoadBalancerNotEnabled]}, errWaf)
 
             const callback = (err, results) => {
-                console.log(results)
                 expect(results.length).to.equal(2)
                 expect(results[0].status).to.equal(3) //due to error returned
-                expect(results[1].status).to.equal(2) //overall failed since WAF had error.
+                expect(results[1].status).to.equal(2) //overall FAILed since WAF had error.
                 done()
             }
-
-            elbWafEnabled.run(cache, {}, callback)
+            // use process next tick because if .run throw synchronously after calling the callback mocha swollows the error.
+            process.nextTick(() => { elbWafEnabled.run(cache, {}, callback) })
         })
     })
 })
