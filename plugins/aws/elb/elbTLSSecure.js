@@ -66,7 +66,7 @@ module.exports = {
                     //helpers.addResult(results, 2, non_tls_listener.join(', '), region);
                     msg = "The following listeners are not using TSL 1.1 or above: ";
                     helpers.addResult(
-                        results, 2, msg + non_tls_listener, region, elbArn
+                        results, 1, msg + non_tls_listener, region, elbArn
                     );
                 }else{
                     helpers.addResult(results, 0, 'No listeners found', region, elbArn);
