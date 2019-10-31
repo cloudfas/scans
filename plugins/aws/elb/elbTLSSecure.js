@@ -43,21 +43,20 @@ module.exports = {
                               'loadbalancer/' + lb.LoadBalancerName;
 
                 // loop through listeners
-                var non_tls_listener = [];
+                var non_tls_listener;
                 lb.ListenerDescriptions.forEach(function(listener){
                     // if it is not TLS add protocol and port.
-                    if(!(listener.PolicyNames.includes("ELBSecurityPolicy-TLS-1-1-2017-01") || listener.PolicyNames.includes("ELBSecurityPolicy-TLS-1-2-2017-01"))) {
-                        non_tls_listener.push(
+                    if((!listener.PolicyNames.includes("ELBSecurityPolicy-TLS-1-1-2017-01") && !listener.PolicyNames.includes("ELBSecurityPolicy-TLS-1-2-2017-01"))) {
+                        non_tls_listener =
                             listener.Listener.Protocol + ' / ' +
                             listener.Listener.LoadBalancerPort
-                        );
                     }
                 });
                 if (non_tls_listener){
                     //helpers.addResult(results, 2, non_tls_listener.join(', '), region);
                     msg = "The following listeners are not using TSL 1.1 or above: ";
                     helpers.addResult(
-                        results, 2, msg + non_tls_listener.join(', '), region, elbArn
+                        results, 2, msg + non_tls_listener, region, elbArn
                     );
                 }else{
                     helpers.addResult(results, 0, 'No listeners found', region, elbArn);
