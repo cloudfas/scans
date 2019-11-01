@@ -102,7 +102,7 @@ async function getConfigurations(parsedEvent, partition) {
  * @throws If roleArn is not defined, rejects with an error.
  */
 
-function getCredentials(roleArn, externalId) {
+async function getCredentials(roleArn, externalId) {
     console.log("Getting Credentials for AWS Configuration");
     if(!roleArn) {
         throw new Error("roleArn is not defined from incoming event.");
@@ -111,9 +111,9 @@ function getCredentials(roleArn, externalId) {
         RoleArn: roleArn,
         ExternalId: externalId
     };
-    return {
-        credentials: new AWS.ChainableTemporaryCredentials({ params: STSParams })
-    };
+    let credentials = new AWS.ChainableTemporaryCredentials({ params: STSParams });
+
+    return credentials.getPromise();
 }
 
 module.exports = {getConfigurations, parseEvent, getCredentials}

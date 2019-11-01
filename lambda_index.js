@@ -42,7 +42,6 @@ exports.handler = async function(event, context) {
         var partition = context.invokedFunctionArn.split(':')[1];
         var configurations = await configs.getConfigurations(configs.parseEvent(event), partition);
         var outputHandler = jsonOutput.create();
-
         //Settings Configuration//
         console.log("Configuring Settings");
         var settings = configurations.settings || {};
@@ -53,7 +52,7 @@ exports.handler = async function(event, context) {
 
         //Config Gathering//
         console.log("Gathering Configurations");
-        var AWSConfig = configurations.aws.roleArn ? configs.getCredentials(configurations.aws.roleArn, configurations.aws.externalId) : null;
+        var AWSConfig = configurations.aws.roleArn ? { credentials: await configs.getCredentials(configurations.aws.roleArn, configurations.aws.externalId) } : null;
         var AzureConfig = configurations.azure || null;
         var GoogleConfig = configurations.gcp || null;
         var GitHubConfig = configurations.github || null;
