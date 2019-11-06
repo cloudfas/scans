@@ -1,9 +1,10 @@
-
 var async = require('async');
-var plugins = require('./exports.js');
 var complianceControls = require('./compliance/controls.js')
-var suppress = require('./postprocess/suppress.js')
+var helpers = require('./helpers/shared')
+var once = require('lodash.once');
 var output = require('./postprocess/output.js')
+var plugins = require('./exports.js');
+var suppress = require('./postprocess/suppress.js')
 
 /**
  * The main function to execute CloudSploit scans.
@@ -161,28 +162,40 @@ var engine = function (AWSConfig, AzureConfig, GitHubConfig, OracleConfig, Googl
                     plugin.types.indexOf('user') === -1) return pluginDone(null, 0);
 
                 var maximumStatus = 0
-                plugin.run(collection, settings, function(err, results) {
-                    outputHandler.startCompliance(plugin, key, compliance)
+                // ensure callback is only called once, since plugin.run could throw after triggering the callback
+                pluginDone = once(pluginDone);
+                try {
+                    plugin.run(collection, settings, function(err, results) {
+                        outputHandler.startCompliance(plugin, key, compliance)
 
-                    for (r in results) {
-                        // If we have suppressed this result, then don't process it
-                        // so that it doesn't affect the return code.
-                        if (suppressionFilter([key, results[r].region || 'any', results[r].resource || 'any'].join(':'))) {
-                            continue;
+                        for (r in results) {
+                            // If we have suppressed this result, then don't process it
+                            // so that it doesn't affect the return code.
+                            if (suppressionFilter([key, results[r].region || 'any', results[r].resource || 'any'].join(':'))) {
+                                continue;
+                            }
+
+                            // Write out the result (to console or elsewhere)
+                            outputHandler.writeResult(results[r], plugin, key)
+
+                            // Add this to our tracking fo the worst status to calculate
+                            // the exit code
+                            maximumStatus = Math.max(maximumStatus, results[r].status)
                         }
-
-                        // Write out the result (to console or elsewhere)
-                        outputHandler.writeResult(results[r], plugin, key)
-
-                        // Add this to our tracking fo the worst status to calculate
-                        // the exit code
-                        maximumStatus = Math.max(maximumStatus, results[r].status)
-                    }
-
-                    outputHandler.endCompliance(plugin, key, compliance)
-
+                        outputHandler.endCompliance(plugin, key, compliance)
+                        setTimeout(function() { pluginDone(err, maximumStatus); }, 0);
+                    });
+                } catch (error) {
+                    outputHandler.writeResult({
+                        status: 3,
+                        region: 'unknown',
+                        resource: null,
+                        custom: false,
+                        message: helpers.addError(error)
+                    }, plugin, key)
+                    maximumStatus = 3;
                     setTimeout(function() { pluginDone(err, maximumStatus); }, 0);
-                });
+                }
             }, function(err, results){
                 if (err) return console.log(err);
                 var summaryStatus = Math.max(...Object.values(results))
