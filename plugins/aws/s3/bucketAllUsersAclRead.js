@@ -41,14 +41,12 @@ module.exports = {
 
         for (i in listBuckets.data) {
             var bucket = listBuckets.data[i];
-            if (!bucket.Name) continue;
 
             var bucketResource = `arn:aws:s3:::${bucket.Name}`;
 
             var getBucketAcl = helpers.addSource(cache, source, ['s3', 'getBucketAcl', region, bucket.Name]);
 
             var bucketIssues = [];
-            var bucketResult = 0;
 
             // Check the bucket ACL
             if (!getBucketAcl || getBucketAcl.err || !getBucketAcl.data) {
@@ -56,24 +54,23 @@ module.exports = {
             } else {
                 for (g in getBucketAcl.data.Grants) {
                     var grant = getBucketAcl.data.Grants[g];
-
                     if (grant.Grantee && grant.Grantee.Type && grant.Grantee.Type === 'Group') {
                         var uri = grant.Grantee.URI;
                         var permission = grant.Permission;
                         if (PERMISSIONS.includes(permission)) {
                             if (uri === ACL_ALL_USERS) {
                                 bucketIssues.push(`ACL Grantee AllUsers allowed: ${permission}`);
-                            } else if (uri === ACL_AUTHENTICATED_USERS) {
+                            }
+                            if (uri === ACL_AUTHENTICATED_USERS) {
                                 bucketIssues.push(`ACL Grantee AuthenticatedUsers allowed: ${permission}`);
                             }
                         }
                     }
                 }
-
                 if (!bucketIssues.length) {
                     helpers.addResult(results, 0, 'Bucket ACL does not allow read on all users', 'global', bucketResource);
                 } else {
-                    helpers.addResult(results, bucketResult, bucketIssues.join(' '), 'global', bucketResource);
+                    helpers.addResult(results, 2, bucketIssues.join(' '), 'global', bucketResource);
                 }
             }
         }

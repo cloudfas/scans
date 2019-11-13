@@ -41,7 +41,6 @@ module.exports = {
 
         for (i in listBuckets.data) {
             var bucket = listBuckets.data[i];
-            if (!bucket.Name) continue;
 
             var bucketResource = `arn:aws:s3:::${bucket.Name}`;
 
@@ -63,7 +62,8 @@ module.exports = {
                         if (PERMISSIONS.includes(permission)) {
                             if (uri === ACL_ALL_USERS) {
                                 bucketIssues.push(`ACL Grantee AllUsers allowed: ${permission}`);
-                            } else if (uri === ACL_AUTHENTICATED_USERS) {
+                            }
+                            if (uri === ACL_AUTHENTICATED_USERS) {
                                 bucketIssues.push(`ACL Grantee AuthenticatedUsers allowed: ${permission}`);
                             }
                         }
@@ -73,7 +73,7 @@ module.exports = {
                 if (!bucketIssues.length) {
                     helpers.addResult(results, 0, 'Bucket ACL does not allow read on all users', 'global', bucketResource);
                 } else {
-                    helpers.addResult(results, bucketResult, bucketIssues.join(' '), 'global', bucketResource);
+                    helpers.addResult(results, 2, bucketIssues.join(' '), 'global', bucketResource);
                 }
             }
         }

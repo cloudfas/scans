@@ -8,9 +8,6 @@ module.exports.writePermissions = [
   's3:DeleteObjectTagging',
   's3:DeleteObjectVersion',
   's3:DeleteObjectVersionTagging',
-  's3:GetBucketObjectLockConfiguration',
-  's3:GetObjectLegalHold',
-  's3:GetObjectRetention',
   's3:ObjectOwnerOverrideToBucketOwner',
   's3:PutAccelerateConfiguration',
   's3:PutAccountPublicAccessBlock',
@@ -48,6 +45,9 @@ module.exports.writePermissions = [
 
 module.exports.readPermissions = [
   's3:DescribeJob',
+  's3:GetBucketObjectLockConfiguration',
+  's3:GetObjectLegalHold',
+  's3:GetObjectRetention',
   's3:GetAccelerateConfiguration',
   's3:GetAccountPublicAccessBlock',
   's3:GetAnalyticsConfiguration',

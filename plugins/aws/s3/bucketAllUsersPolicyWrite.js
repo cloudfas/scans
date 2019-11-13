@@ -62,7 +62,6 @@ module.exports = {
 
         for (i in listBuckets.data) {
             var bucket = listBuckets.data[i];
-            if (!bucket.Name) continue;
 
             var bucketResource = `arn:aws:s3:::${bucket.Name}`;
 
