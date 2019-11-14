@@ -130,8 +130,10 @@ module.exports = {
         'domainExpiry'                  : require(__dirname + '/plugins/aws/route53/domainExpiry.js'),
         'domainTransferLock'            : require(__dirname + '/plugins/aws/route53/domainTransferLock.js'),
 
-        'bucketAllUsersPolicy'          : require(__dirname + '/plugins/aws/s3/bucketAllUsersPolicy.js'),
-        'bucketAllUsersAcl'             : require(__dirname + '/plugins/aws/s3/bucketAllUsersAcl.js'),
+        'bucketAllUsersPolicyRead'      : require(__dirname + '/plugins/aws/s3/bucketAllUsersPolicyRead.js'),
+        'bucketAllUsersPolicyWrite'     : require(__dirname + '/plugins/aws/s3/bucketAllUsersPolicyWrite.js'),
+        'bucketAllUsersAclRead'         : require(__dirname + '/plugins/aws/s3/bucketAllUsersAclRead.js'),
+        'bucketAllUsersAclWrite'        : require(__dirname + '/plugins/aws/s3/bucketAllUsersAclWrite.js'),
         'bucketVersioning'              : require(__dirname + '/plugins/aws/s3/bucketVersioning.js'),
         'bucketLogging'                 : require(__dirname + '/plugins/aws/s3/bucketLogging.js'),
         'crossAccountAccess'            : require(__dirname + '/plugins/aws/s3/crossAccountAccess.js'),
