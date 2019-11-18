@@ -36,9 +36,10 @@ module.exports = {
             return callback(null, results, source);
         }
 
-        for (i in listBuckets.data) {
-            var bucket = listBuckets.data[i];
-            if (!bucket.Name) continue;
+        //for (i in listBuckets.data) {
+            async.each(listBuckets.data, function(bucket, bcb) {
+            //var bucket = listBuckets.data[i];
+            if (!bucket.Name) return bcb();
 
             var bucketResource = 'arn:aws:s3:::' + bucket.Name;
 
@@ -64,7 +65,8 @@ module.exports = {
                         'global', bucketResource);
                 }
             }
-        }
+            return bcb()
+        });
 
         callback(null, results, source);
     }
