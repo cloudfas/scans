@@ -74,52 +74,55 @@ module.exports = {
                 if (tagErr !== 'The TagList does not exist') {
                     helpers.addResult(results, 3, `Error querying instances tags for ${bucket.Name}: ${helpers.addError(bucketTags)}`, 'global', bucketResource);
                 }
-                return dcb();
+                return bcb();
             }
 
-            var targetTag = bucketTags.data.TagList.find(({ Key, Value }) => Key === tagKey && tagValueRegex.test(Value));
-            if (!targetTag) {
-                return bcb(); // the tag is not found
-            }
-
-            var getBucketEncryption = helpers.addSource(cache, source,
-                ['s3', 'getBucketEncryption', region, bucket.Name]);
-
-            if (!getBucketEncryption || getBucketEncryption.err || !getBucketEncryption.data) {
-                if(getBucketEncryption.err && getBucketEncryption.err.message === 'The server side encryption configuration was not found') {
-                    helpers.addResult(results, 2,
-                        'No default Encryption set for bucket: ' + bucket.Name,
-                        'global', bucketResource);
-                } else {
-                    helpers.addResult(results, 3,
-                        'Error querying for bucket Encryption for bucket: ' + bucket.Name +
-                        ': ' + helpers.addError(getBucketEncryption),
-                        'global', bucketResource);
+            async.filter(bucketTags.data.TagList, function(tagPair, fcb) {
+                fcb(null, tagPair.Key === tagKey && tagValueRegex.test(tagPair.Value))
+            }, function(err, val) {
+                if(val.length === 0) {
+                    helpers.addResult(results, 0, 'Bucket not tagged for sensitive data.', region, bucketResource);
+                    return bcb()
                 }
-            } else {
-                var algorithm = getBucketEncryption.data.ServerSideEncryptionConfiguration.Rules[0].ApplyServerSideEncryptionByDefault.SSEAlgorithm
-                if(algorithm === 'aws:kms') {
-                    keyId = getBucketEncryption.data.ServerSideEncryptionConfiguration.Rules[0].ApplyServerSideEncryptionByDefault.KMSMasterKeyId.split("/")[1]
-                    var describeKey = helpers.addSource(cache, source, ['kms', 'describeKey', region, keyId]);
 
-                    if (describeKey.err || !describeKey.data) {
-                        helpers.addResult(results, 3, 'Unable to query for S3 bucket key: ' + helpers.addError(describeKey), region);
-                        return bcb();
-                    }
+                var getBucketEncryption = helpers.addSource(cache, source,
+                    ['s3', 'getBucketEncryption', region, bucket.Name]);
 
-                    if(describeKey.data.KeyMetadata.KeyManager === "CUSTOMER") {
-                        helpers.addResult(results, 0, 'Encryption is enabled for sensitive data via CMK: ' + (keyId || 'Unknown'), region, bucketResource);
+                if (!getBucketEncryption || getBucketEncryption.err || !getBucketEncryption.data) {
+                    if(getBucketEncryption.err && getBucketEncryption.err.message === 'The server side encryption configuration was not found') {
+                        helpers.addResult(results, 2,
+                            'No default Encryption set for bucket: ' + bucket.Name,
+                            'global', bucketResource);
                     } else {
-                        helpers.addResult(results, 2, 'Encryption is enabled for sensitive data, but not with a Customer Managed Key', region, bucketResource);
+                        helpers.addResult(results, 3,
+                            'Error querying for bucket Encryption for bucket: ' + bucket.Name +
+                            ': ' + helpers.addError(getBucketEncryption),
+                            'global', bucketResource);
                     }
                 } else {
-                    helpers.addResult(results, 2,
-                        'Bucket ' + bucket.Name + ' uses ' + algorithm + ' for default Encryption instead of CMK.',
-                        'global', bucketResource);
+                    var algorithm = getBucketEncryption.data.ServerSideEncryptionConfiguration.Rules[0].ApplyServerSideEncryptionByDefault.SSEAlgorithm
+                    if(algorithm === 'aws:kms') {
+                        var keyId = getBucketEncryption.data.ServerSideEncryptionConfiguration.Rules[0].ApplyServerSideEncryptionByDefault.KMSMasterKeyID.split("/")[1]
+                        var describeKey = helpers.addSource(cache, source, ['kms', 'describeKey', region, keyId]);
 
+                        if (describeKey.err || !describeKey.data) {
+                            helpers.addResult(results, 3, 'Unable to query for KMS Key: ' + helpers.addError(describeKey), region);
+                            return bcb();
+                        }
+
+                        if(describeKey.data.KeyMetadata.KeyManager === "CUSTOMER") {
+                            helpers.addResult(results, 0, 'Encryption is enabled for sensitive data via CMK: ' + (keyId || 'Unknown'), region, bucketResource);
+                        } else {
+                            helpers.addResult(results, 2, 'Encryption is enabled for sensitive data, but not with a Customer Managed Key', region, bucketResource);
+                        }
+                    } else {
+                        helpers.addResult(results, 2,
+                            'Bucket ' + bucket.Name + ' uses ' + algorithm + ' for default Encryption instead of CMK.',
+                            'global', bucketResource);
+                    }
                 }
-            }
-            return bcb();
+                return bcb();
+            })
         })
 
         callback(null, results, source);
