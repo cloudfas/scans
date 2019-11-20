@@ -134,7 +134,6 @@ module.exports = {
         'bucketLogging'                 : require(__dirname + '/plugins/aws/s3/bucketLogging.js'),
         'bucketVersioning'              : require(__dirname + '/plugins/aws/s3/bucketVersioning.js'),
         'crossAccountAccess'            : require(__dirname + '/plugins/aws/s3/crossAccountAccess.js'),
-        's3DefaultEncryption'           : require(__dirname + '/plugins/aws/s3/s3DefaultEncryption.js'),
         's3DefaultEncryptionSensitive'  : require(__dirname + '/plugins/aws/s3/s3Encryption.js'),
         's3Permissions'                 : require(__dirname + '/plugins/aws/s3/s3Permissions.js'),
 
