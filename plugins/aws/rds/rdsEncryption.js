@@ -43,9 +43,13 @@ module.exports = {
             cloudhsm: 5
         };
 
-        var desiredEncryptionLevelString = settings.rds_encryption_level || this.settings.rds_encryption_level
+        var desiredEncryptionLevelString = settings.rds_encryption_level || this.settings.rds_encryption_level.default
         var desiredEncryptionLevel = encryptionLevelMap[desiredEncryptionLevelString]
         var currentEncryptionLevelString, currentEncryptionLevel
+        if(!desiredEncryptionLevel) {
+            helpers.addResult(results, 3, 'Settings misconfigured for RDS Encryption Level.');
+            return callback(null, results, source);
+        }
 
         var regions = helpers.regions(settings);
 

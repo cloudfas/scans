@@ -1,6 +1,6 @@
 var assert = require('assert');
 var expect = require('chai').expect;
-var defaultEncryption = require('./rdsEncryption.js/index.js')
+var defaultEncryption = require('./rdsEncryption.js')
 
 const createCache = (dbInfo, keyInfo) => {
     return {
@@ -791,6 +791,124 @@ describe('bucketDefaultEncryption', function () {
                 }
 
                 process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'cloudhsm'}, callback) })
+            })
+        })
+        describe.only('misconfiguredSettings', function() {
+            it('should FAIL when no instances exist.', function (done) {
+                const cache = createCache({data: []},
+                    {})
+
+                const callback = (err, results) => {
+                    expect(results.length).to.equal(1)
+                    expect(results[0].status).to.equal(3)
+                    done()
+                }
+
+                process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'DNE'}, callback) })
+            })
+
+            it('should FAIL when the instance \`awskms\` encryption enabled.', function (done) {
+                const cache = createCache({data: [rdsEncrypted]},
+                    createDataHolder(awsKey, {data: awsKMSKey}))
+
+                const callback = (err, results) => {
+                    expect(results.length).to.equal(1)
+                    expect(results[0].status).to.equal(3)
+                    done()
+                }
+
+                process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'DNE'}, callback) })
+            })
+
+            it('should FAIL when the instance \`awscmk\` encryption enabled.', function (done) {
+                const cache = createCache({data: [rdsEncrypted]},
+                    createDataHolder(awsKey, {data: awsCustomerKey}))
+
+                const callback = (err, results) => {
+                    expect(results.length).to.equal(1)
+                    expect(results[0].status).to.equal(3)
+                    done()
+                }
+
+                process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'DNE'}, callback) })
+            })
+
+            it('should FAIL when the instance \`externalcmk\` encryption enabled.', function (done) {
+                const cache = createCache({data: [rdsEncrypted]},
+                    createDataHolder(awsKey, {data: awsExternalKey}))
+
+                const callback = (err, results) => {
+                    expect(results.length).to.equal(1)
+                    expect(results[0].status).to.equal(3)
+                    done()
+                }
+
+                process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'DNE'}, callback) })
+            })
+
+            it('should FAIL when the instance \`cloudhsm\` encryption enabled.', function (done) {
+                const cache = createCache({data: [rdsEncrypted]},
+                    createDataHolder(awsKey, {data: awsHSMKey}))
+
+                const callback = (err, results) => {
+                    expect(results.length).to.equal(1)
+                    expect(results[0].status).to.equal(3)
+                    done()
+                }
+
+                process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'DNE'}, callback) })
+            })
+
+            it('should FAIL when instance has no encryption enabled.', function (done) {
+                const cache = createCache({data: [rdsNotEncrypted]},
+                    {})
+
+                const callback = (err, results) => {
+                    expect(results.length).to.equal(1)
+                    expect(results[0].status).to.equal(3)
+                    done()
+                }
+
+                process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'DNE'}, callback) })
+            })
+
+            it('should FAIL when instance has an error.', function (done) {
+                const cache = createCache(exampleAccessDeniedError,
+                    {})
+
+                const callback = (err, results) => {
+                    expect(results.length).to.equal(1)
+                    expect(results[0].status).to.equal(3)
+                    done()
+                }
+
+                process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'DNE'}, callback) })
+            })
+
+            it('should FAIL when kms encryption returns an error.', function (done) {
+                const cache = createCache({data: [rdsEncrypted]},
+                    createDataHolder(awsKey, exampleAccessDeniedError))
+
+                const callback = (err, results) => {
+                    expect(results.length).to.equal(1)
+                    expect(results[0].status).to.equal(3)
+                    done()
+                }
+
+                process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'DNE'}, callback) })
+            })
+
+            it('should FAIL when kms encryption does not exist.', function (done) {
+                const cache = createCache({data: [rdsEncrypted]},
+                    {})
+
+                const callback = (err, results) => {
+                    expect(results.length).to.equal(1)
+                    expect(results[0].status).to.equal(3)
+                    done()
+                }
+
+                process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'DNE'}, callback) })
             })
         })
     })
