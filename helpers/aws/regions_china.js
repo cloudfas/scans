@@ -50,4 +50,5 @@ module.exports = {
     directconnect: regions,
     directoryservice: [],
     guardduty: [],
+    organizations: ['cn-north-1'],
 };

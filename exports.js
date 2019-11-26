@@ -168,6 +168,8 @@ module.exports = {
 
         'guardDutyEnabled'               : require(__dirname + '/plugins/aws/guardduty/guarddutyEnabled.js'),
         'guardDutyMaster'               : require(__dirname + '/plugins/aws/guardduty/guarddutyMaster.js'),
+        'enableAllFeatures'             : require(__dirname + '/plugins/aws/organizations/enableAllFeatures.js'),
+        'organizationInvite'             : require(__dirname + '/plugins/aws/organizations/organizationInvite.js'),
     },
     azure : {
         'fileServiceEncryption'         : require(__dirname + '/plugins/azure/storageaccounts/fileServiceEncryption.js'),
