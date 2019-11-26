@@ -27,48 +27,107 @@ module.exports = {
         var source = {};
         var regions = helpers.regions(settings);
 
-        async.each(regions.elb, function(region, rcb){
-            var describeLoadBalancers = helpers.addSource(cache, source,
-                ['elb', 'describeLoadBalancers', region]);
+        async.waterfall([
+            function(callb) {
+                async.each(regions.elb, function(region, rcb){
 
-            if (!describeLoadBalancers) return rcb();
-
-            if (describeLoadBalancers.err || !describeLoadBalancers.data) {
-                helpers.addResult(results, 3,
-                    'Unable to query for load balancers: ' + helpers.addError(describeLoadBalancers), region);
-                return rcb();
-            }
-
-            if (!describeLoadBalancers.data.length) {
-                helpers.addResult(results, 0, 'No load balancers present', region);
-                return rcb();
-            }
-
-            async.each(describeLoadBalancers.data, function(lb, cb){
-                // loop through listeners
-                var describeLoadBalancerAttributes = helpers.addSource(cache, source,
-                    ['elb', 'describeLoadBalancerAttributes', region, lb.DNSName]);
-
-                if ( describeLoadBalancerAttributes.data && 
-                    describeLoadBalancerAttributes.data.LoadBalancerAttributes && 
-                    describeLoadBalancerAttributes.data.LoadBalancerAttributes.AccessLog) {
-                    accessLog = describeLoadBalancerAttributes.data.LoadBalancerAttributes.AccessLog
-                    
-                    //console.log(lb.DNSName)
-                    if (accessLog.Enabled){
-                        helpers.addResult(results, 0,
-                            'Logging enabled for ' + lb.DNSName, region, lb.DNSName);
-                    } else {
-                        helpers.addResult(results, 2,
-                            'Logging not enabled for ' + lb.DNSName, region, lb.DNSName);
+                    var describeLoadBalancers = helpers.addSource(cache, source,
+                        ['elb', 'describeLoadBalancers', region]);
+        
+                    if (!describeLoadBalancers) {
+                        return rcb();
+                    } 
+        
+                    if (describeLoadBalancers.err || !describeLoadBalancers.data) {
+                        helpers.addResult(results, 3,
+                            'Unable to query for load balancers: ' + helpers.addError(describeLoadBalancers), region);
+                        return rcb();
                     }
-                }
-                cb();
-            }, function(){
-                rcb();
-            });
-        }, function(){
+                    if (!describeLoadBalancers.data.length) {
+                        helpers.addResult(results, 0, 'No load balancers present', region);
+                        return rcb();
+                    }
+        
+                    async.each(describeLoadBalancers.data, function(lb, cb){
+
+                        // loop through listeners
+                        var describeLoadBalancerAttributes = helpers.addSource(cache, source,
+                            ['elb', 'describeLoadBalancerAttributes', region, lb.DNSName]);
+
+                        if ( describeLoadBalancerAttributes.data && 
+                            describeLoadBalancerAttributes.data.LoadBalancerAttributes && 
+                            describeLoadBalancerAttributes.data.LoadBalancerAttributes.AccessLog) {
+                            accessLog = describeLoadBalancerAttributes.data.LoadBalancerAttributes.AccessLog
+                                
+                            if (accessLog.Enabled){
+                                helpers.addResult(results, 0,
+                                    'Logging enabled for ' + lb.DNSName, region, lb.DNSName);
+                            } else {
+                                helpers.addResult(results, 2,
+                                    'Logging not enabled for ' + lb.DNSName, region, lb.DNSName);
+                            }
+                        }
+                        cb();
+                    }, function(){
+                        rcb()
+                    });
+                }, function() {
+                    callb()
+                });
+
+            },
+            function(callb) {
+                async.each(regions.elbv2, function(region, rcb){
+                    var describeLoadBalancers = helpers.addSource(cache, source,
+                        ['elbv2', 'describeLoadBalancers', region]);
+        
+                    if (!describeLoadBalancers) {
+                        return rcb();
+                    }
+        
+                    if (describeLoadBalancers.err || !describeLoadBalancers.data) {
+                        helpers.addResult(results, 3,
+                            'Unable to query for v2 load balancers: ' + helpers.addError(describeLoadBalancers), region);
+                        return rcb();
+                    }
+        
+                    if (!describeLoadBalancers.data.length) {
+                        helpers.addResult(results, 0, 'No v2 load balancers present', region);
+                        return rcb();
+                    }
+        
+                    async.each(describeLoadBalancers.data, function(lb, cb){
+                        // loop through listeners
+                        var describeLoadBalancerAttributes = helpers.addSource(cache, source,
+                            ['elbv2', 'describeLoadBalancerAttributes', region, lb.DNSName]);
+        
+                        if ( describeLoadBalancerAttributes.data && 
+                            describeLoadBalancerAttributes.data.LoadBalancerAttributes && 
+                            describeLoadBalancerAttributes.data.LoadBalancerAttributes.AccessLog) {
+                            accessLog = describeLoadBalancerAttributes.data.LoadBalancerAttributes.AccessLog
+                            
+                            //console.log(lb.DNSName)
+                            if (accessLog.Enabled){
+                                helpers.addResult(results, 0,
+                                    'Logging enabled for ' + lb.DNSName, region, lb.DNSName);
+                            } else {
+                                helpers.addResult(results, 2,
+                                    'Logging not enabled for ' + lb.DNSName, region, lb.DNSName);
+                            }
+                        }
+                        cb();
+                    }, function(){
+                        rcb()
+                    });
+                }, function() {
+                    callb()
+                })
+
+            }
+        ], 
+        function(){
             callback(null, results, source);
         });
+        
     }
 };
