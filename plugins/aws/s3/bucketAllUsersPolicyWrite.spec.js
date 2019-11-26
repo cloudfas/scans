@@ -101,7 +101,7 @@ const createNullCache = () => {
     };
 };
 
-describe.only('bucketAllUsersPolicyWrite', function () {
+describe('bucketAllUsersPolicyWrite', function () {
     describe('run', function () {
         it('should PASS when the bucket policy does not grant world writes.', function (done) {
             const cache = createCache('*', 's3:Get*');

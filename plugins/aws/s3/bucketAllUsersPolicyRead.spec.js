@@ -101,7 +101,7 @@ const createNullCache = () => {
     };
 };
 
-describe.only('bucketAllUsersPolicyRead', function () {
+describe('bucketAllUsersPolicyRead', function () {
     describe('run', function () {
         it('should PASS when the bucket policy does not grant world reads.', function (done) {
             const cache = createCache('*', 's3:Put*');
