@@ -14,7 +14,7 @@ const createCache = (groups) => {
     }
 };
 
-describe.only('CloudWatch Log Retention Rate', function () {
+describe('CloudWatch Log Retention Rate', function () {
     describe('run', function () {
         it('should FAIL if the retention is too low', function (done) {
             const callback = (err, results) => {
