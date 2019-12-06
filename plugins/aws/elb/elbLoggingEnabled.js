@@ -12,7 +12,7 @@ module.exports = {
                 'analysis.',
     link: 'http://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-access-logs.html',
     recommended_action: 'Enable ELB request logging',
-    apis: ['ELB:describeLoadBalancers', 'ELB:describeLoadBalancerAttributes'],
+    apis: ['ELB:describeLoadBalancers', 'ELB:describeLoadBalancerAttributes', 'ELBv2:describeLoadBalancers', 'ELBv2:describeLoadBalancerAttributes'],
     compliance: {
         hipaa: 'HIPAA requires access logging to be enabled for the auditing ' +
                 'of services serving HIPAA data. All ELBs providing this access ' +

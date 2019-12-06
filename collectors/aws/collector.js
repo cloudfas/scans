@@ -563,6 +563,11 @@ var postcalls = [
                 reliesOnCall: 'describeTargetGroups',
                 filterKey: 'TargetGroupArn',
                 filterValue: 'TargetGroupArn'
+            },
+            describeLoadBalancerAttributes: {
+                reliesOnService: 'elbv2',
+                reliesOnCall: 'describeLoadBalancers',
+                override: true
             }
         },
         IAM: {
