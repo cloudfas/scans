@@ -793,7 +793,7 @@ describe('bucketDefaultEncryption', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'cloudhsm'}, callback) })
             })
         })
-        describe.only('misconfiguredSettings', function() {
+        describe('misconfiguredSettings', function() {
             it('should FAIL when no instances exist.', function (done) {
                 const cache = createCache({data: []},
                     {})

@@ -1,5 +1,18 @@
 var async = require('async');
 var helpers = require('../../../helpers/aws');
+const encryptionLevelMap = {
+    sse: 1,
+    awskms: 2,
+    awscmk: 3,
+    externalcmk: 4,
+    cloudhsm: 5
+};
+
+function getEncryptionLevel(kmsKey) {
+    return kmsKey.Origin === 'AWS_CLOUDHSM' ? 'cloudhsm' :
+           kmsKey.Origin === 'EXTERNAL' ? 'externalcmk' :
+           kmsKey.KeyManager === 'CUSTOMER' ? 'awscmk' : 'awskms'
+}
 
 module.exports = {
     title: 'RDS Encryption Enabled',
@@ -35,22 +48,15 @@ module.exports = {
     run: function(cache, settings, callback) {
         var results = [];
         var source = {};
-        const encryptionLevelMap = {
-            sse: 1,
-            awskms: 2,
-            awscmk: 3,
-            externalcmk: 4,
-            cloudhsm: 5
-        };
 
         var desiredEncryptionLevelString = settings.rds_encryption_level || this.settings.rds_encryption_level.default
-        var desiredEncryptionLevel = encryptionLevelMap[desiredEncryptionLevelString]
-        var currentEncryptionLevelString, currentEncryptionLevel
-        if(!desiredEncryptionLevel) {
+        if(!desiredEncryptionLevelString.match(this.settings.rds_encryption_level.regex)) {
             helpers.addResult(results, 3, 'Settings misconfigured for RDS Encryption Level.');
             return callback(null, results, source);
         }
 
+        var desiredEncryptionLevel = encryptionLevelMap[desiredEncryptionLevelString]
+        var currentEncryptionLevelString, currentEncryptionLevel
         var regions = helpers.regions(settings);
 
         async.each(regions.rds, function(region, rcb){
@@ -82,11 +88,10 @@ module.exports = {
                         helpers.addResult(results, 3, 'Unable to query for KMS Key: ' + helpers.addError(describeKey), region);
                         return dcb();
                     }
-                    currentEncryptionLevelString =  describeKey.data.KeyMetadata.Origin === 'AWS_CLOUDHSM' ? 'cloudhsm' :
-                                                    describeKey.data.KeyMetadata.Origin === 'EXTERNAL' ? 'externalcmk' :
-                                                    describeKey.data.KeyMetadata.KeyManager === 'CUSTOMER' ? 'awscmk' : 'awskms'
 
+                    currentEncryptionLevelString = getEncryptionLevel(describeKey.data.KeyMetadata)
                     currentEncryptionLevel = encryptionLevelMap[currentEncryptionLevelString]
+
                     if (currentEncryptionLevel < desiredEncryptionLevel) {
                         helpers.addResult(results, 1, `RDS Storage is encrypted to ${currentEncryptionLevelString}, which is lower than the desired ${desiredEncryptionLevelString} level.`, region, dbResource);
                     } else {
