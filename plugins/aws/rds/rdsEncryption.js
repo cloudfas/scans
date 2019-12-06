@@ -2,7 +2,7 @@ var async = require('async');
 var helpers = require('../../../helpers/aws');
 
 module.exports = {
-    title: 'RDS Encryption Enabled for Sensistive Data',
+    title: 'RDS Encryption Enabled',
     category: 'RDS',
     description: 'Ensures at-rest encryption with Customer Key is setup for RDS instances containing sensitive data.',
     more_info: 'AWS provides at-rest encryption for RDS instances which should be enabled to ensure the integrity of data stored within the databases.',
