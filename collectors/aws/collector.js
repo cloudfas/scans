@@ -41,9 +41,6 @@ var calls = {
         getRestApis: {
             property: 'items',
             paginate: 'position',
-            params: {
-                limit: 1
-            }
         }
     },
     Athena: {
@@ -465,6 +462,14 @@ var postcalls = [
                 filterValue: 'CertificateArn'
             }
         },
+        APIGateway: {
+            getStages: {
+                reliesOnService: 'apigateway',
+                reliesOnCall: 'getRestApis',
+                filterKey: 'restApiId',
+                filterValue: 'id'
+            }
+        },
         Athena: {
             getWorkGroup: {
                 reliesOnService: 'athena',
@@ -874,6 +879,7 @@ var collect = function (AWSConfig, settings, callback) {
                     if (!collection[serviceLower][callKey]) collection[serviceLower][callKey] = {};
 
                     async.eachLimit(regions[serviceLower], helpers.MAX_REGIONS_AT_A_TIME, function (region, regionCb) {
+
                         if (settings.skip_regions &&
                             settings.skip_regions.indexOf(region) > -1 &&
                             globalServices.indexOf(service) === -1) return regionCb();
@@ -951,6 +957,7 @@ var collect = function (AWSConfig, settings, callback) {
 
                                     var filter = {};
                                     filter[callObj.filterKey] = dep[callObj.filterValue];
+
                                     executor[callKey](filter, function (err, data) {
                                         if (debugTime) {
                                             var innerDate = new Date();
