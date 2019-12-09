@@ -78,16 +78,17 @@ var exampleAccessDeniedError = {
     }
 }
 
-describe('bucketDefaultEncryption', function () {
+describe('rdsEncryption', function () {
     var dbInstance = "arn:aws:rds:us-east-1:1234567890:db:myDB"
     var awsKey = "abcdefgh-1234-12ab-12ab-012345678910"
     describe('run', function () {
         describe('noSettings', function() {
-            it('should PASS when no instances exist.', function (done) {
+            it('should PASS when no instances exist', function (done) {
                 const cache = createCache({data: []},
                     {})
 
                 const callback = (err, results) => {
+                    console.log(results)
                     expect(results.length).to.equal(1)
                     expect(results[0].status).to.equal(0)
                     done()
@@ -199,125 +200,6 @@ describe('bucketDefaultEncryption', function () {
                 }
 
                 process.nextTick(() => { defaultEncryption.run(cache, {}, callback) })
-            })
-        })
-        describe('sseSettings', function() {
-            it('should PASS when no instances exist.', function (done) {
-                const cache = createCache({data: []},
-                    {})
-
-                const callback = (err, results) => {
-                    expect(results.length).to.equal(1)
-                    expect(results[0].status).to.equal(0)
-                    done()
-                }
-
-                process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'sse'}, callback) })
-            })
-
-            it('should PASS when the instance \`awskms\` encryption enabled.', function (done) {
-                const cache = createCache({data: [rdsEncrypted]},
-                    createDataHolder(awsKey, {data: awsKMSKey}))
-
-                const callback = (err, results) => {
-                    expect(results.length).to.equal(1)
-                    expect(results[0].status).to.equal(0)
-                    done()
-                }
-
-                process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'sse'}, callback) })
-            })
-
-            it('should PASS when the instance \`awscmk\` encryption enabled.', function (done) {
-                const cache = createCache({data: [rdsEncrypted]},
-                    createDataHolder(awsKey, {data: awsCustomerKey}))
-
-                const callback = (err, results) => {
-                    expect(results.length).to.equal(1)
-                    expect(results[0].status).to.equal(0)
-                    done()
-                }
-
-                process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'sse'}, callback) })
-            })
-
-            it('should PASS when the instance \`externalcmk\` encryption enabled.', function (done) {
-                const cache = createCache({data: [rdsEncrypted]},
-                    createDataHolder(awsKey, {data: awsExternalKey}))
-
-                const callback = (err, results) => {
-                    expect(results.length).to.equal(1)
-                    expect(results[0].status).to.equal(0)
-                    done()
-                }
-
-                process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'sse'}, callback) })
-            })
-
-            it('should PASS when the instance \`cloudhsm\` encryption enabled.', function (done) {
-                const cache = createCache({data: [rdsEncrypted]},
-                    createDataHolder(awsKey, {data: awsHSMKey}))
-
-                const callback = (err, results) => {
-                    expect(results.length).to.equal(1)
-                    expect(results[0].status).to.equal(0)
-                    done()
-                }
-
-                process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'sse'}, callback) })
-            })
-
-            it('should FAIL when instance has no encryption enabled.', function (done) {
-                const cache = createCache({data: [rdsNotEncrypted]},
-                    {})
-
-                const callback = (err, results) => {
-                    expect(results.length).to.equal(1)
-                    expect(results[0].status).to.equal(2)
-                    done()
-                }
-
-                process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'sse'}, callback) })
-            })
-
-            it('should FAIL when instance has an error.', function (done) {
-                const cache = createCache(exampleAccessDeniedError,
-                    {},
-                    {})
-
-                const callback = (err, results) => {
-                    expect(results.length).to.equal(1)
-                    expect(results[0].status).to.equal(3)
-                    done()
-                }
-
-                process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'sse'}, callback) })
-            })
-
-            it('should FAIL when kms encryption returns an error.', function (done) {
-                const cache = createCache({data: [rdsEncrypted]},
-                    createDataHolder(awsKey, exampleAccessDeniedError))
-
-                const callback = (err, results) => {
-                    expect(results.length).to.equal(1)
-                    expect(results[0].status).to.equal(3)
-                    done()
-                }
-
-                process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'sse'}, callback) })
-            })
-
-            it('should FAIL when kms encryption does not exist.', function (done) {
-                const cache = createCache({data: [rdsEncrypted]},
-                    {})
-
-                const callback = (err, results) => {
-                    expect(results.length).to.equal(1)
-                    expect(results[0].status).to.equal(3)
-                    done()
-                }
-
-                process.nextTick(() => { defaultEncryption.run(cache, {rds_encryption_level: 'sse'}, callback) })
             })
         })
         describe('awskmsSettings', function() {
