@@ -37,6 +37,15 @@ var calls = {
             paginate: 'NextToken'
         }
     },
+    APIGateway: {
+        getRestApis: {
+            property: 'items',
+            paginate: 'position',
+            params: {
+                limit: 1
+            }
+        }
+    },
     Athena: {
         listWorkGroups: {
             property: 'WorkGroups',
@@ -815,6 +824,7 @@ var collect = function (AWSConfig, settings, callback) {
 
                         // If a "paginate" property is set, e.g. NextToken
                         var nextToken = callObj.paginate;
+
                         if (settings.paginate && nextToken && data[nextToken]) {
                             paginating = true;
                             var paginateProp = callObj.paginateReqProp ? callObj.paginateReqProp : nextToken;
@@ -978,7 +988,7 @@ var collect = function (AWSConfig, settings, callback) {
                 postcallCb();
             });
         }, function () {
-            //console.log(JSON.stringify(collection, null, 2));
+
             callback(null, collection);
         });
     });
