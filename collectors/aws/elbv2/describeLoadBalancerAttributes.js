@@ -4,10 +4,10 @@ var async = require('async');
 module.exports = function(AWSConfig, collection, callback) {
     var elbv2 = new AWS.ELBv2(AWSConfig);
 
-    async.eachLimit(collection.elbv2.describeLoadBalancers[AWSConfig.region].data, 15, function(lb, cb){        
+    async.eachLimit(collection.elbv2.describeLoadBalancers[AWSConfig.region].data, 15, function(lb, cb){
         collection.elbv2.describeLoadBalancerAttributes[AWSConfig.region][lb.DNSName] = {};
         var params = {
-            'LoadBalancerName':lb.LoadBalancerName
+            'LoadBalancerArn':lb.LoadBalancerArn
         }
         elbv2.describeLoadBalancerAttributes(params, function(err, data) {
             if (err) {
@@ -16,7 +16,7 @@ module.exports = function(AWSConfig, collection, callback) {
             collection.elbv2.describeLoadBalancerAttributes[AWSConfig.region][lb.DNSName].data = data;
             cb();
         });
-                
+
     }, function(){
         callback();
     });

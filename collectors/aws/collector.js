@@ -567,7 +567,9 @@ var postcalls = [
             describeLoadBalancerAttributes: {
                 reliesOnService: 'elbv2',
                 reliesOnCall: 'describeLoadBalancers',
-                override: true
+                // filterKey: 'LoadBalancerArn', # these could be used but the custom collector uses the DNSName as the key instead of the ARN.
+                // filterValue: 'LoadBalancerArn'
+                override: true // overridden because elbv1 uses the balancer's DNSName as the key, not the ARN
             }
         },
         IAM: {
