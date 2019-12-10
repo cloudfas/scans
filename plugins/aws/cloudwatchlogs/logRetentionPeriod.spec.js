@@ -1,6 +1,6 @@
 var assert = require('assert');
 var expect = require('chai').expect;
-var logs = require('./logRetentionRate.js')
+var logs = require('./logRetentionPeriod.js')
 
 const createCache = (groups) => {
     return {
@@ -14,7 +14,7 @@ const createCache = (groups) => {
     }
 };
 
-describe('CloudWatch Log Retention Rate', function () {
+describe('CloudWatch Log Retention Period', function () {
     describe('run', function () {
         it('should FAIL if the retention is too low', function (done) {
             const callback = (err, results) => {
@@ -37,6 +37,19 @@ describe('CloudWatch Log Retention Rate', function () {
             };
 
             const cache = createCache([])
+
+            logs.run(cache, {}, callback);
+        })
+
+        it('should FAIL if a group with no retention rate is passed', function (done) {
+            const callback = (err, results) => {
+                expect(results[0].status).to.equal(2);
+                done()
+            };
+            
+            const cache = createCache([{
+                "arn": "test1",
+              }])
 
             logs.run(cache, {}, callback);
         })

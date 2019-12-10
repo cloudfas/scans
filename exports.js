@@ -148,7 +148,7 @@ module.exports = {
         'lambdaPublicAccess'            : require(__dirname + '/plugins/aws/lambda/lambdaPublicAccess.js'),
 
         'monitoringMetrics'             : require(__dirname + '/plugins/aws/cloudwatchlogs/monitoringMetrics.js'),
-        'logRetentionRate'             : require(__dirname + '/plugins/aws/cloudwatchlogs/logRetentionRate.js'),
+        'logRetentionPeriod'             : require(__dirname + '/plugins/aws/cloudwatchlogs/logRetentionPeriod.js'),
 
 
         'redshiftEncryptionEnabled'     : require(__dirname + '/plugins/aws/redshift/redshiftEncryptionEnabled.js'),
