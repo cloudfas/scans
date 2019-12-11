@@ -16,12 +16,37 @@ module.exports = {
         async.each(regions.guardduty, function(region, rcb) {
             var listDetectors = helpers.addSource(cache, source, ['guardduty', 'listDetectors', region]);
             if (!listDetectors) return rcb();
-            if (listDetectors.err) {
-                helpers.addResult(results, 3, 'Unable to query GuardDuty', region);
-            } else if (!listDetectors.data.length) {
+            if (listDetectors.err || !listDetectors.data) {
+                helpers.addResult(results, 3, 'Unable to list guardduty detectors: ' + helpers.addError(listDetectors), region);
+                return rcb();
+            }
+
+            // describe each detector
+            const detectors = listDetectors.data
+                .map(detectorId => {
+                    const getDetector = helpers.addSource(cache, source, ['guardduty', 'getDetector', region, detectorId]);
+                    if (!getDetector) return { Status: 'unknown' };
+                    if (getDetector.err || !getDetector.data) {
+                        helpers.addResult(results, 3, `Unable to get guardduty detector: ${helpers.addError(listDetectors)}`, region, detectorId);
+                        return { Status: 'unknown' };
+                    }
+                    return { detectorId, ...getDetector.data};
+                });
+
+            if (!detectors.length) {
                 helpers.addResult(results, 2, 'GuardDuty not enabled', region);
             } else {
-                helpers.addResult(results, 0, 'GuardDuty is enabled', region);
+                const enabledDetectors = detectors.filter(detector => detector.Status === 'ENABLED');
+                const badDetectors = detectors.filter(detector => detector.Status !== 'ENABLED');
+                if (enabledDetectors.length >= 1) {
+                    enabledDetectors.forEach(detector => {
+                        helpers.addResult(results, 0, 'GuardDuty is enabled', region, detector.detectorId);
+                    });
+                } else {
+                    badDetectors.forEach(detector => {
+                        helpers.addResult(results, 2, `GuardDuty detector is ${detector.Status}`, region, detector.detectorId);
+                    });
+                }
             }
             rcb();
         }, function(){
