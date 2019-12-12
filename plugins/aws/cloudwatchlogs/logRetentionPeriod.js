@@ -24,51 +24,35 @@ module.exports = {
         var source = {};
         var regions = helpers.regions(settings);
         async.each(regions.cloudwatchlogs, function(region, rcb){
-            var describeLogGroups = helpers.addSource(cache, source,
-                ['cloudwatchlogs', 'describeLogGroups', region]);
+            var describeLogGroups = helpers.addSource(cache, source, ['cloudwatchlogs', 'describeLogGroups', region]);
 
             if (!describeLogGroups || describeLogGroups.err ||
-                !describeLogGroups.data || !describeLogGroups.data.length) {
-                helpers.addResult(results, 3,
-                    'Unable to query for CloudWatchLogs log groups: ' + helpers.addError(describeLogGroups), region);
-
+                !describeLogGroups.data) {
+                helpers.addResult(results, 3, 'Unable to query for CloudWatchLogs log groups: ' + helpers.addError(describeLogGroups), region);
                 return rcb();
             }
 
-            var logGroupsInRegion = [];
-
-            for (t in describeLogGroups.data) {
-                if (describeLogGroups.data[t].retentionInDays) {
-                    logGroupsInRegion.push(describeLogGroups.data[t]);
-                } else {
-                    helpers.addResult(results, 2,
-                        'Log group does not have a retention period attached to it', region,
-                        t.arn);
-                }
+            if (!describeLogGroups.data.length) {
+                helpers.addResult(results, 0, 'There are no CloudWatch log groups in this region', region);
+                return rcb()
             }
 
-            if (!logGroupsInRegion.length) {
-                helpers.addResult(results, 0,
-                    'There are no CloudWatch log groups in this region', region);
-                return rcb()
-            };
-            async.each(logGroupsInRegion, function(group, tcb){
-
-                if (group.retentionInDays < config.log_retention_in_days) {
-                    helpers.addResult(results, 2,
-                        'Log group retention period of ' + group.retentionInDays + ' is less than required period of ' + config.log_retention_in_days, region,
-                        group.arn);
+            for (let logGroup of describeLogGroups.data) {
+                if (logGroup.retentionInDays) {
+                    if (logGroup.retentionInDays < config.log_retention_in_days) {
+                        helpers.addResult(results, 2,
+                            'Log group retention period of ' + logGroup.retentionInDays + ' is less than required period of ' + config.log_retention_in_days, region,
+                            logGroup.arn);
+                    } else {
+                        helpers.addResult(results, 0,
+                            'Log group retention period of ' + logGroup.retentionInDays + ' is greater than or equal to the required period of ' + config.log_retention_in_days, region,
+                            logGroup.arn);
+                    }
                 } else {
-                    helpers.addResult(results, 0,
-                        'Log group retention period of ' + group.retentionInDays + ' is greater than or equal to the required period of ' + config.log_retention_in_days, region,
-                        group.arn);
+                    helpers.addResult(results, 2, 'Log group does not have a retention period', region, logGroup.arn);
                 }
-                
-
-                tcb();
-            }, function(){
-                rcb();
-            });
+            }
+            return rcb()
         }, function(){
             callback(null, results, source);
         });
