@@ -33,38 +33,34 @@ module.exports = {
             }
 
             async.each(restApis.data, (api, cb) => {
-
                 var stages = helpers.addSource(cache, source, ['apigateway', 'getStages', region, api.id]);
                 if (!stages) {
-                    helpers.addResult(results, 3, 'Unable to query for API Stage: ' + helpers.addError(api.name), region, api.id);
+                    helpers.addResult(results, 3, 'Unable to query for REST API Stage: ' + helpers.addError(api.name), region, api.name);
                     return cb();
                 }
 
                 if (stages.err || !stages.data) {
-                    helpers.addResult(results, 3, 'Unable to query for API Gateways: ' + helpers.addError(api.name), region, api.id);
+                    helpers.addResult(results, 3, 'Unable to query for REST API Gateways: ' + helpers.addError(api.name), region, api.name);
                     return cb();
                 }
 
                 if (stages.data.item.length < 1) {
-                    helpers.addResult(results, 0, 'API Gateway does not have Stages: ' + helpers.addError(api.name), region, api.id);
+                    helpers.addResult(results, 0, 'REST API does not have any stages', region, api.name);
                     return cb();
                 }
 
                 stages.data.item.forEach(stage => {
                     if (!stage.webAclArn || stage.webAclArn.length < 1) {
-                        helpers.addResult(results, 2, 'The following Stage does not have WAF enabled: ' + api.name + '/' + stage.stageName, region, api.id);
+                        helpers.addResult(results, 2, 'The REST API/stage does not have WAF enabled', region, api.name + '/' + stage.stageName);
                     } else {
-                        helpers.addResult(results, 0, 'The Stages on ' + api.name + ' have WAF enabled', region, api.id);
-
+                        helpers.addResult(results, 0, 'The REST API/stage has WAF enabled', region, api.name + '/' + stage.stageName);
                     }
                 });
-
                 cb();
             }, function() {
                 lcb();
             });
         }, function() {
-
             callback(null, results, source)
         });
     }

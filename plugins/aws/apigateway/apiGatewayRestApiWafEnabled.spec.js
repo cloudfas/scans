@@ -1,6 +1,6 @@
 var assert = require('assert');
 var expect = require('chai').expect;
-var apiGatewayWafEnabled = require('./apiGatewayRestApiWafEnabled.js/index.js')
+var apiGatewayWafEnabled = require('./apiGatewayRestApiWafEnabled.js')
 
 const createCache = (gateways, stages) => {
     return {
@@ -19,8 +19,6 @@ const createCache = (gateways, stages) => {
 
 describe('apiGatewayWafEnabled', function () {
     describe('run', function () {
-
-
         it('should FAIL if passed Gateways without WAF attached', function (done) {
             const callback = (err, results) => {
                 expect(results[0].status).to.equal(2)
@@ -30,7 +28,7 @@ describe('apiGatewayWafEnabled', function () {
             const cache = createCache(
                 [
                     {
-                        id: "testId", 
+                        id: "testId",
                         name: "stage"
                     }
                 ],
@@ -57,7 +55,7 @@ describe('apiGatewayWafEnabled', function () {
             const cache = createCache(
                 [
                     {
-                        id: "testId", 
+                        id: "testId",
                         name: "stage"
                     }
                 ],
@@ -76,7 +74,7 @@ describe('apiGatewayWafEnabled', function () {
             apiGatewayWafEnabled.run(cache, {}, callback);
         })
 
-        it('should FAIL if no Gateways passed at all', function (done) {
+        it('should PASS if no Gateways passed at all', function (done) {
             const callback = (err, results) => {
                 expect(results[0].status).to.equal(0)
                 done()
