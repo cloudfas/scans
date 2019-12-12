@@ -138,6 +138,7 @@ module.exports = {
         'bucketAllUsersAclWrite'        : require(__dirname + '/plugins/aws/s3/bucketAllUsersAclWrite.js'),
         'bucketAllUsersPolicyRead'      : require(__dirname + '/plugins/aws/s3/bucketAllUsersPolicyRead.js'),
         'bucketAllUsersPolicyWrite'     : require(__dirname + '/plugins/aws/s3/bucketAllUsersPolicyWrite.js'),
+        'bucketEncryptionInTransit'     : require(__dirname + '/plugins/aws/s3/bucketEncryptionInTransit.js'),
         'bucketLogging'                 : require(__dirname + '/plugins/aws/s3/bucketLogging.js'),
         'bucketVersioning'              : require(__dirname + '/plugins/aws/s3/bucketVersioning.js'),
         'crossAccountAccess'            : require(__dirname + '/plugins/aws/s3/crossAccountAccess.js'),
