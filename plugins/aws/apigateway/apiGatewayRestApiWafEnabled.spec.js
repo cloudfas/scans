@@ -1,6 +1,6 @@
 var assert = require('assert');
 var expect = require('chai').expect;
-var apiGatewayWafEnabled = require('./apiGatewayWafEnabled.js')
+var apiGatewayWafEnabled = require('./apiGatewayRestApiWafEnabled.js/index.js')
 
 const createCache = (gateways, stages) => {
     return {
@@ -82,7 +82,7 @@ describe('apiGatewayWafEnabled', function () {
                 done()
             };
 
-            const cache = createCache({}, {});
+            const cache = createCache([], []);
 
             apiGatewayWafEnabled.run(cache, {}, callback);
         })

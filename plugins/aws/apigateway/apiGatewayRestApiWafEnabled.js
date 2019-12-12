@@ -2,9 +2,9 @@ var async = require('async');
 var helpers = require('../../../helpers/aws');
 
 module.exports = {
-    title: 'API Gateway WAF Enabled',
+    title: 'API Gateway REST API WAF Enabled',
     category: 'API Gateway',
-    description: 'Ensure that all API Gateways have WAF enabled.',
+    description: 'Ensure that all API Gateway REST APIs have WAF enabled.',
     more_info: 'Enabling WAF allows control over requests to the API Gateway, allowing or denying traffic based off rules in the Web ACL',
     link: 'https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-control-access-aws-waf.html',
     recommended_action: '1. Enter the WAF service. 2. Enter Web ACLs and filter by the region the API Gateway is in. 3. If no Web ACL is found, Create a new Web ACL in the region the Gateway resides and in Resource type to associate with web ACL, select the API Gateway. ',
@@ -15,46 +15,46 @@ module.exports = {
         var source = {};
         var regions = helpers.regions(settings);
 
-        async.each(regions.apigateway, function(loc, lcb){
+        async.each(regions.apigateway, function(region, lcb){
 
             var restApis = helpers.addSource(cache, source,
-                ['apigateway', 'getRestApis', loc]);
+                ['apigateway', 'getRestApis', region]);
 
             if (!restApis) return lcb();
 
             if (restApis.err || !restApis.data) {
-                helpers.addResult(results, 3, 'Unable to query for API Gateways: ' + helpers.addError(restApis), loc);
+                helpers.addResult(results, 3, 'Unable to query for API Gateways: ' + helpers.addError(restApis), region);
                 return lcb();
             }
 
             if (!restApis.data.length) {
-                helpers.addResult(results, 0, 'No API Gateways found', loc);
+                helpers.addResult(results, 0, 'No API Gateways found', region);
                 return lcb();
             }
 
             async.each(restApis.data, (api, cb) => {
 
-                var stages = helpers.addSource(cache, source, ['apigateway', 'getStages', loc, api.id]);
+                var stages = helpers.addSource(cache, source, ['apigateway', 'getStages', region, api.id]);
                 if (!stages) {
-                    helpers.addResult(results, 3, 'Unable to query for API Stage: ' + helpers.addError(api.name), loc);
+                    helpers.addResult(results, 3, 'Unable to query for API Stage: ' + helpers.addError(api.name), region, api.id);
                     return cb();
                 }
 
                 if (stages.err || !stages.data) {
-                    helpers.addResult(results, 3, 'Unable to query for API Stage: ' + helpers.addError(api.name), loc);
+                    helpers.addResult(results, 3, 'Unable to query for API Gateways: ' + helpers.addError(api.name), region, api.id);
                     return cb();
                 }
 
                 if (stages.data.item.length < 1) {
-                    helpers.addResult(results, 3, 'API Gateway does not have Stages: ' + helpers.addError(api.name), loc);
+                    helpers.addResult(results, 0, 'API Gateway does not have Stages: ' + helpers.addError(api.name), region, api.id);
                     return cb();
                 }
 
                 stages.data.item.forEach(stage => {
                     if (!stage.webAclArn || stage.webAclArn.length < 1) {
-                        helpers.addResult(results, 2, 'The following API Gateway has a Stage without WAF enabled: ' + api.name);
+                        helpers.addResult(results, 2, 'The following Stage does not have WAF enabled: ' + api.name + '/' + stage.stageName, region, api.id);
                     } else {
-                        helpers.addResult(results, 0, 'The Stages on ' + api.name + 'have WAF enabled');
+                        helpers.addResult(results, 0, 'The Stages on ' + api.name + ' have WAF enabled', region, api.id);
 
                     }
                 });
