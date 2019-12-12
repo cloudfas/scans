@@ -5,9 +5,9 @@ module.exports = {
     title: 'ELB Logging Enabled',
     category: 'ELB',
     description: 'Ensures load balancers have request logging enabled.',
-    more_info: 'Logging requests to ELB endpoints is a helpful way ' + 
-                'of detecting and investigating potential attacks, ' + 
-                'malicious activity, or misuse of backend resources.' + 
+    more_info: 'Logging requests to ELB endpoints is a helpful way ' +
+                'of detecting and investigating potential attacks, ' +
+                'malicious activity, or misuse of backend resources.' +
                 'Logs can be sent to S3 and processed for further ' +
                 'analysis.',
     link: 'http://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-access-logs.html',
@@ -33,11 +33,11 @@ module.exports = {
 
                     var describeLoadBalancers = helpers.addSource(cache, source,
                         ['elb', 'describeLoadBalancers', region]);
-        
+
                     if (!describeLoadBalancers) {
                         return rcb();
-                    } 
-        
+                    }
+
                     if (describeLoadBalancers.err || !describeLoadBalancers.data) {
                         helpers.addResult(results, 3,
                             'Unable to query for load balancers: ' + helpers.addError(describeLoadBalancers), region);
@@ -47,18 +47,18 @@ module.exports = {
                         helpers.addResult(results, 0, 'No load balancers present', region);
                         return rcb();
                     }
-        
+
                     async.each(describeLoadBalancers.data, function(lb, cb){
 
                         // loop through listeners
                         var describeLoadBalancerAttributes = helpers.addSource(cache, source,
                             ['elb', 'describeLoadBalancerAttributes', region, lb.DNSName]);
 
-                        if ( describeLoadBalancerAttributes.data && 
-                            describeLoadBalancerAttributes.data.LoadBalancerAttributes && 
+                        if ( describeLoadBalancerAttributes.data &&
+                            describeLoadBalancerAttributes.data.LoadBalancerAttributes &&
                             describeLoadBalancerAttributes.data.LoadBalancerAttributes.AccessLog) {
                             accessLog = describeLoadBalancerAttributes.data.LoadBalancerAttributes.AccessLog
-                                
+
                             if (accessLog.Enabled){
                                 helpers.addResult(results, 0,
                                     'Logging enabled for ' + lb.DNSName, region, lb.DNSName);
@@ -80,32 +80,32 @@ module.exports = {
                 async.each(regions.elbv2, function(region, rcb){
                     var describeLoadBalancers = helpers.addSource(cache, source,
                         ['elbv2', 'describeLoadBalancers', region]);
-        
+
                     if (!describeLoadBalancers) {
                         return rcb();
                     }
-        
+
                     if (describeLoadBalancers.err || !describeLoadBalancers.data) {
                         helpers.addResult(results, 3,
                             'Unable to query for v2 load balancers: ' + helpers.addError(describeLoadBalancers), region);
                         return rcb();
                     }
-        
+
                     if (!describeLoadBalancers.data.length) {
                         helpers.addResult(results, 0, 'No v2 load balancers present', region);
                         return rcb();
                     }
-        
+
                     async.each(describeLoadBalancers.data, function(lb, cb){
 
                         // loop through listeners
                         var describeLoadBalancerAttributes = helpers.addSource(cache, source,
                             ['elbv2', 'describeLoadBalancerAttributes', region, lb.DNSName]);
-        
-                        if ( describeLoadBalancerAttributes.data && describeLoadBalancerAttributes.data.Attributes) {
-                            var accessLogEnabled = JSON.parse(describeLoadBalancerAttributes.data.Attributes[0].Value);
-                            
-                            //console.log(lb.DNSName)
+
+                        if (describeLoadBalancerAttributes.data && describeLoadBalancerAttributes.data.Attributes) {
+                            var s3AccessLogAttribute = describeLoadBalancerAttributes.data.Attributes.find(a => a.Key = 'access_logs.s3.enabled')
+                            var accessLogEnabled = s3AccessLogAttribute && s3AccessLogAttribute.Value === 'true'
+
                             if (accessLogEnabled){
                                 helpers.addResult(results, 0,
                                     'Logging enabled for ' + lb.DNSName, region, lb.DNSName);
@@ -123,10 +123,10 @@ module.exports = {
                 })
 
             }
-        ], 
+        ],
         function(){
             callback(null, results, source);
         });
-        
+
     }
 };
