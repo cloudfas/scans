@@ -14,7 +14,7 @@ const createCache = (groups) => {
     }
 };
 
-describe.only('CloudWatch Log Retention Period', function () {
+describe('CloudWatch Log Retention Period', function () {
     describe('run', function () {
         it('should FAIL if the retention is too low', function (done) {
             const callback = (err, results) => {
