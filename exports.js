@@ -2,6 +2,8 @@
 
 module.exports = {
     aws : {
+        'apiGatewayRestApiWafEnabled'   : require(__dirname + '/plugins/aws/apigateway/apiGatewayRestApiWafEnabled.js'),
+
         'acmValidation'                 : require(__dirname + '/plugins/aws/acm/acmValidation.js'),
         'acmCertificateExpiry'          : require(__dirname + '/plugins/aws/acm/acmCertificateExpiry.js'),
         'asgMultiAz'                    : require(__dirname + '/plugins/aws/autoscaling/asgMultiAz.js'),
@@ -136,6 +138,7 @@ module.exports = {
         'bucketAllUsersAclWrite'        : require(__dirname + '/plugins/aws/s3/bucketAllUsersAclWrite.js'),
         'bucketAllUsersPolicyRead'      : require(__dirname + '/plugins/aws/s3/bucketAllUsersPolicyRead.js'),
         'bucketAllUsersPolicyWrite'     : require(__dirname + '/plugins/aws/s3/bucketAllUsersPolicyWrite.js'),
+        'bucketEncryptionInTransit'     : require(__dirname + '/plugins/aws/s3/bucketEncryptionInTransit.js'),
         'bucketLogging'                 : require(__dirname + '/plugins/aws/s3/bucketLogging.js'),
         'bucketVersioning'              : require(__dirname + '/plugins/aws/s3/bucketVersioning.js'),
         'crossAccountAccess'            : require(__dirname + '/plugins/aws/s3/crossAccountAccess.js'),
@@ -159,6 +162,8 @@ module.exports = {
         'lambdaPublicAccess'            : require(__dirname + '/plugins/aws/lambda/lambdaPublicAccess.js'),
 
         'monitoringMetrics'             : require(__dirname + '/plugins/aws/cloudwatchlogs/monitoringMetrics.js'),
+        'logRetentionPeriod'             : require(__dirname + '/plugins/aws/cloudwatchlogs/logRetentionPeriod.js'),
+
 
         'redshiftEncryptionEnabled'     : require(__dirname + '/plugins/aws/redshift/redshiftEncryptionEnabled.js'),
         'redshiftPubliclyAccessible'    : require(__dirname + '/plugins/aws/redshift/redshiftPubliclyAccessible.js'),
