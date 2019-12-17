@@ -142,9 +142,9 @@ module.exports = {
         'bucketLogging'                 : require(__dirname + '/plugins/aws/s3/bucketLogging.js'),
         'bucketVersioning'              : require(__dirname + '/plugins/aws/s3/bucketVersioning.js'),
         'crossAccountAccess'            : require(__dirname + '/plugins/aws/s3/crossAccountAccess.js'),
-        's3DefaultEncryptionSensitive'  : require(__dirname + '/plugins/aws/s3/s3Encryption.js'),
         's3Permissions'                 : require(__dirname + '/plugins/aws/s3/s3Permissions.js'),
         'bucketPublicAccessBlock'       : require(__dirname + '/plugins/aws/s3/bucketPublicAccessBlock.js'),
+        's3DefaultEncryption'           : require(__dirname + '/plugins/aws/s3/s3DefaultEncryption.js'),
 
         'notebookDataEncrypted'         : require(__dirname + '/plugins/aws/sagemaker/notebookDataEncrypted.js'),
         'notebookDirectInternetAccess'  : require(__dirname + '/plugins/aws/sagemaker/notebookDirectInternetAccess.js'),
