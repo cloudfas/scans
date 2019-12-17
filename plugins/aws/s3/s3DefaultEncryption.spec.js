@@ -1,6 +1,6 @@
 var assert = require('assert');
 var expect = require('chai').expect;
-var defaultEncryption = require('./s3Encryption.js')
+var defaultEncryption = require('./s3DefaultEncryption.js')
 
 const createCache = (s3Buckets, encryptionData, keyData) => {
     return {
