@@ -7,15 +7,15 @@ var ACL_AUTHENTICATED_USERS = 'http://acs.amazonaws.com/groups/global/Authentica
 module.exports = {
     title: 'S3 Encryption',
     category: 'S3',
-    description: 'Ensures S3 buckets are configured for Encryption at a level required by the organization.',
+    description: 'Ensures S3 bucket default encryption is configured at a level required by the organization.',
     more_info: '',
-    recommended_action: 'Enable Encryption on S3 buckets.',
+    recommended_action: 'Enable Default Encryption on S3 buckets.',
     link: 'https://docs.aws.amazon.com/AmazonS3/latest/user-guide/default-bucket-encryption.html',
     apis: ['S3:listBuckets', 'S3:getBucketEncryption', 'kms:describeKey'],
     compliance: {},
     settings: {
         s3_encryption_level: {
-            name: 'S3 Minimum Encryption Level',
+            name: 'S3 Minimum Default Encryption Level',
             description: 'In order (lowest to highest) \
                 sse=Server-Side Encryption; \
                 awskms=AWS-managed KMS; \
@@ -42,7 +42,7 @@ module.exports = {
         var desiredEncryptionLevel = encryptionLevelMap[desiredEncryptionLevelString]
         var currentEncryptionLevelString, currentEncryptionLevel
         if(!desiredEncryptionLevel) {
-            helpers.addResult(results, 3, 'Settings misconfigured for S3 Encryption Level.');
+            helpers.addResult(results, 3, 'Settings misconfigured for S3 Default Encryption Level.');
             return callback(null, results, source);
         }
 
@@ -80,7 +80,7 @@ module.exports = {
                         'global', bucketResource);
                 } else {
                     helpers.addResult(results, 3,
-                        'Error querying for bucket Encryption for bucket: ' + bucket.Name +
+                        'Error querying for bucket default Encryption for bucket: ' + bucket.Name +
                         ': ' + helpers.addError(getBucketEncryption),
                         'global', bucketResource);
                 }
@@ -106,9 +106,9 @@ module.exports = {
                 }
                 currentEncryptionLevel = encryptionLevelMap[currentEncryptionLevelString]
                 if (currentEncryptionLevel < desiredEncryptionLevel) {
-                    helpers.addResult(results, 1, `s3 is encrypted to ${currentEncryptionLevelString}, which is lower than the desired ${desiredEncryptionLevelString} level.`, region, bucketResource);
+                    helpers.addResult(results, 1, `s3 is configured with default encryption at ${currentEncryptionLevelString}, which is lower than the desired ${desiredEncryptionLevelString} level.`, region, bucketResource);
                 } else {
-                    helpers.addResult(results, 0, `s3 is encrypted to a minimum of ${desiredEncryptionLevelString}`, region, bucketResource);
+                    helpers.addResult(results, 0, `s3 is configured with default encryption at a minimum of ${desiredEncryptionLevelString}`, region, bucketResource);
                 }
             }
             return bcb();
