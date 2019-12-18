@@ -108,7 +108,7 @@ var awsHSMKey = { //abbreviated event
     }
 }
 
-describe('bucketDefaultEncryptionSensitive', function () {
+describe('bucketDefaultEncryption', function () {
     var awsKey = "abcdefgh-1234-12ab-12ab-012345678910"
     var bucketName = "My-First-Bucket"
     describe('run', function () {
@@ -127,7 +127,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {}, callback) })
             })
 
-            it('should PASS when the bucket has \`sse\` encryption enabled.', function (done) {
+            it('should PASS when the bucket has \`sse\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: aes256Encryption}),
                     {})
@@ -141,7 +141,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {}, callback) })
             })
 
-            it('should PASS when the bucket \`awskms\` encryption enabled.', function (done) {
+            it('should PASS when the bucket \`awskms\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsKMSKey}))
@@ -155,7 +155,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {}, callback) })
             })
 
-            it('should PASS when the bucket \`awscmk\` encryption enabled.', function (done) {
+            it('should PASS when the bucket \`awscmk\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsCustomerKey}))
@@ -169,7 +169,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {}, callback) })
             })
 
-            it('should PASS when the bucket \`externalcmk\` encryption enabled.', function (done) {
+            it('should PASS when the bucket \`externalcmk\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsExternalKey}))
@@ -183,7 +183,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {}, callback) })
             })
 
-            it('should PASS when the bucket \`cloudhsm\` encryption enabled.', function (done) {
+            it('should PASS when the bucket \`cloudhsm\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsHSMKey}))
@@ -197,7 +197,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {}, callback) })
             })
 
-            it('should PASS when the bucket has more than \'sse\' encryption enabled, but describeKey has an error.', function (done) {
+            it('should PASS when the bucket has more than \'sse\' default encryption enabled, but describeKey has an error.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, exampleAccessDeniedError))
@@ -211,7 +211,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {}, callback) })
             })
 
-            it('should FAIL when that bucket has no encryption enabled.', function (done) {
+            it('should FAIL when that bucket has no default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, exampleNoBucketEncryption),
                     {})
@@ -269,7 +269,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {}, callback) })
             })
 
-            it('should PASS when the bucket has \`sse\` encryption enabled.', function (done) {
+            it('should PASS when the bucket has \`sse\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: aes256Encryption}),
                     {})
@@ -283,7 +283,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'sse'}, callback) })
             })
 
-            it('should PASS when the bucket \`awskms\` encryption enabled.', function (done) {
+            it('should PASS when the bucket \`awskms\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsKMSKey}))
@@ -297,7 +297,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'sse'}, callback) })
             })
 
-            it('should PASS when the bucket \`awscmk\` encryption enabled.', function (done) {
+            it('should PASS when the bucket \`awscmk\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsCustomerKey}))
@@ -311,7 +311,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'sse'}, callback) })
             })
 
-            it('should PASS when the bucket \`externalcmk\` encryption enabled.', function (done) {
+            it('should PASS when the bucket \`externalcmk\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsExternalKey}))
@@ -325,7 +325,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'sse'}, callback) })
             })
 
-            it('should PASS when the bucket \`cloudhsm\` encryption enabled.', function (done) {
+            it('should PASS when the bucket \`cloudhsm\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsHSMKey}))
@@ -339,7 +339,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'sse'}, callback) })
             })
 
-            it('should PASS when the bucket has more than \'sse\' encryption enabled, but describeKey has an error.', function (done) {
+            it('should PASS when the bucket has more than \'sse\' default encryption enabled, but describeKey has an error.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, exampleAccessDeniedError))
@@ -353,7 +353,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'sse'}, callback) })
             })
 
-            it('should FAIL when that bucket has no encryption enabled.', function (done) {
+            it('should FAIL when that bucket has no default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, exampleNoBucketEncryption),
                     {})
@@ -411,7 +411,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {}, callback) })
             })
 
-            it('should WARN when the bucket has \`sse\` encryption enabled.', function (done) {
+            it('should WARN when the bucket has \`sse\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: aes256Encryption}),
                     {})
@@ -425,7 +425,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'awskms'}, callback) })
             })
 
-            it('should PASS when the bucket \`awskms\` encryption enabled.', function (done) {
+            it('should PASS when the bucket \`awskms\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsKMSKey}))
@@ -439,7 +439,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'awskms'}, callback) })
             })
 
-            it('should PASS when the bucket \`awscmk\` encryption enabled.', function (done) {
+            it('should PASS when the bucket \`awscmk\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsCustomerKey}))
@@ -453,7 +453,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'awskms'}, callback) })
             })
 
-            it('should PASS when the bucket \`externalcmk\` encryption enabled.', function (done) {
+            it('should PASS when the bucket \`externalcmk\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsExternalKey}))
@@ -467,7 +467,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'awskms'}, callback) })
             })
 
-            it('should PASS when the bucket \`cloudhsm\` encryption enabled.', function (done) {
+            it('should PASS when the bucket \`cloudhsm\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsHSMKey}))
@@ -495,7 +495,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'awskms'}, callback) })
             })
 
-            it('should FAIL when that bucket has no encryption enabled.', function (done) {
+            it('should FAIL when that bucket has no default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, exampleNoBucketEncryption),
                     {})
@@ -553,7 +553,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {}, callback) })
             })
 
-            it('should WARN when the bucket has \`sse\` encryption enabled.', function (done) {
+            it('should WARN when the bucket has \`sse\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: aes256Encryption}),
                     {})
@@ -567,7 +567,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'awscmk'}, callback) })
             })
 
-            it('should WARN when the bucket \`awskms\` encryption enabled.', function (done) {
+            it('should WARN when the bucket \`awskms\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsKMSKey}))
@@ -581,7 +581,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'awscmk'}, callback) })
             })
 
-            it('should PASS when the bucket \`awscmk\` encryption enabled.', function (done) {
+            it('should PASS when the bucket \`awscmk\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsCustomerKey}))
@@ -595,7 +595,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'awscmk'}, callback) })
             })
 
-            it('should PASS when the bucket \`externalcmk\` encryption enabled.', function (done) {
+            it('should PASS when the bucket \`externalcmk\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsExternalKey}))
@@ -609,7 +609,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'awscmk'}, callback) })
             })
 
-            it('should PASS when the bucket \`cloudhsm\` encryption enabled.', function (done) {
+            it('should PASS when the bucket \`cloudhsm\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsHSMKey}))
@@ -637,7 +637,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'awscmk'}, callback) })
             })
 
-            it('should FAIL when that bucket has no encryption enabled.', function (done) {
+            it('should FAIL when that bucket has no default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, exampleNoBucketEncryption),
                     {})
@@ -695,7 +695,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {}, callback) })
             })
 
-            it('should WARN when the bucket has \`sse\` encryption enabled.', function (done) {
+            it('should WARN when the bucket has \`sse\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: aes256Encryption}),
                     {})
@@ -709,7 +709,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'externalcmk'}, callback) })
             })
 
-            it('should WARN when the bucket \`awskms\` encryption enabled.', function (done) {
+            it('should WARN when the bucket \`awskms\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsKMSKey}))
@@ -723,7 +723,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'externalcmk'}, callback) })
             })
 
-            it('should WARN when the bucket \`awscmk\` encryption enabled.', function (done) {
+            it('should WARN when the bucket \`awscmk\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsCustomerKey}))
@@ -737,7 +737,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'externalcmk'}, callback) })
             })
 
-            it('should PASS when the bucket \`externalcmk\` encryption enabled.', function (done) {
+            it('should PASS when the bucket \`externalcmk\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsExternalKey}))
@@ -751,7 +751,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'externalcmk'}, callback) })
             })
 
-            it('should PASS when the bucket \`cloudhsm\` encryption enabled.', function (done) {
+            it('should PASS when the bucket \`cloudhsm\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsHSMKey}))
@@ -779,7 +779,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'externalcmk'}, callback) })
             })
 
-            it('should FAIL when that bucket has no encryption enabled.', function (done) {
+            it('should FAIL when that bucket has no default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, exampleNoBucketEncryption),
                     {})
@@ -837,7 +837,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {}, callback) })
             })
 
-            it('should WARN when the bucket has \`sse\` encryption enabled.', function (done) {
+            it('should WARN when the bucket has \`sse\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: aes256Encryption}),
                     {})
@@ -851,7 +851,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'cloudhsm'}, callback) })
             })
 
-            it('should WARN when the bucket \`awskms\` encryption enabled.', function (done) {
+            it('should WARN when the bucket \`awskms\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsKMSKey}))
@@ -865,7 +865,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'cloudhsm'}, callback) })
             })
 
-            it('should WARN when the bucket \`awscmk\` encryption enabled.', function (done) {
+            it('should WARN when the bucket \`awscmk\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsCustomerKey}))
@@ -879,7 +879,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'cloudhsm'}, callback) })
             })
 
-            it('should WARN when the bucket \`externalcmk\` encryption enabled.', function (done) {
+            it('should WARN when the bucket \`externalcmk\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsExternalKey}))
@@ -893,7 +893,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'cloudhsm'}, callback) })
             })
 
-            it('should PASS when the bucket \`cloudhsm\` encryption enabled.', function (done) {
+            it('should PASS when the bucket \`cloudhsm\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsHSMKey}))
@@ -921,7 +921,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'cloudhsm'}, callback) })
             })
 
-            it('should FAIL when that bucket has no encryption enabled.', function (done) {
+            it('should FAIL when that bucket has no default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, exampleNoBucketEncryption),
                     {})
@@ -979,7 +979,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'DNE'}, callback) })
             })
 
-            it('should FAIL when the bucket has \`sse\` encryption enabled.', function (done) {
+            it('should FAIL when the bucket has \`sse\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: aes256Encryption}),
                     {})
@@ -993,7 +993,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'DNE'}, callback) })
             })
 
-            it('should FAIL when the bucket \`awskms\` encryption enabled.', function (done) {
+            it('should FAIL when the bucket \`awskms\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsKMSKey}))
@@ -1007,7 +1007,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'DNE'}, callback) })
             })
 
-            it('should FAIL when the bucket \`awscmk\` encryption enabled.', function (done) {
+            it('should FAIL when the bucket \`awscmk\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsCustomerKey}))
@@ -1021,7 +1021,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'DNE'}, callback) })
             })
 
-            it('should FAIL when the bucket \`externalcmk\` encryption enabled.', function (done) {
+            it('should FAIL when the bucket \`externalcmk\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsExternalKey}))
@@ -1035,7 +1035,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'DNE'}, callback) })
             })
 
-            it('should FAIL when the bucket \`cloudhsm\` encryption enabled.', function (done) {
+            it('should FAIL when the bucket \`cloudhsm\` default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, {data: awsKMSEncryption}),
                     createDataHolder(awsKey, {data: awsHSMKey}))
@@ -1063,7 +1063,7 @@ describe('bucketDefaultEncryptionSensitive', function () {
                 process.nextTick(() => { defaultEncryption.run(cache, {s3_encryption_level: 'DNE'}, callback) })
             })
 
-            it('should FAIL when that bucket has no encryption enabled.', function (done) {
+            it('should FAIL when that bucket has no default encryption enabled.', function (done) {
                 const cache = createCache({data: [exampleBucket]},
                     createDataHolder(bucketName, exampleNoBucketEncryption),
                     {})
