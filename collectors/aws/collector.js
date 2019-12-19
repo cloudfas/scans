@@ -444,6 +444,12 @@ var calls = {
             paginate: 'NextToken'
         }
     },
+    SecretsManager: {
+        listSecrets: {
+            property: 'SecretList',
+            paginate: 'NextToken'
+        },
+    },
     STS: {
         getCallerIdentity: {
             property: 'Account'
@@ -771,6 +777,14 @@ var postcalls = [
                 reliesOnCall: 'describeTrustedAdvisorChecks',
                 filterKey: 'checkId',
                 filterValue: 'id'
+            }
+        },
+        SecretsManager: {
+            describeSecret: {
+                reliesOnService: 'secretsmanager',
+                reliesOnCall: 'listSecrets',
+                filterKey: 'SecretId',
+                filterValue: 'ARN',
             },
         },
         WAFRegional: {
