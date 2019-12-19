@@ -14,7 +14,7 @@ const createCache = (data) => {
     }
 };
 
-describe.only('rdsMinorVersionUpgrade', function () {
+describe('rdsMinorVersionUpgrade', function () {
     describe('run', function () {
         it('should give passing result if AutoMinorVersionUpgrade is enabled', function (done) {
             const callback = (err, results) => {
