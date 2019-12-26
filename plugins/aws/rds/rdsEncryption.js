@@ -53,7 +53,6 @@ module.exports = {
         var desiredEncryptionLevel = encryptionLevelMap[desiredEncryptionLevelString]
         var currentEncryptionLevelString, currentEncryptionLevel
         var regions = helpers.regions(settings);
-
         async.each(regions.rds, function(region, rcb){
             var describeDBInstances = helpers.addSource(cache, source, ['rds', 'describeDBInstances', region]);
             if (!describeDBInstances) return rcb();
@@ -71,9 +70,8 @@ module.exports = {
             async.each(describeDBInstances.data, function(db, dcb) {
                 // For resource, attempt to use the endpoint address (more specific) but fallback to the instance identifier
                 var dbResource = db.DBInstanceArn;
-                var keyId = db.KmsKeyId.split("/")[1];
-
                 if (db.StorageEncrypted) {
+                    var keyId = db.KmsKeyId.split("/")[1];
                     var describeKey = helpers.addSource(cache, source, ['kms', 'describeKey', region, keyId]);
                     if(!describeKey) {
                         helpers.addResult(results, 3, 'Unable locate KMS key for describeKey: ' + keyId, region);
