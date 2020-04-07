@@ -51,6 +51,9 @@ module.exports = {
             async.each(describeTrails.data, function(trail, cb){
                 if (!trail.S3BucketName || bucketRegex.test(trail.S3BucketName))
                     return cb();
+                // Skip CloudSploit-managed events bucket
+                if (trail.S3BucketName == helpers.CLOUDSPLOIT_EVENTS_BUCKET) return cb();
+
                 var s3Region = helpers.defaultRegion(settings);
 
                 var getBucketAcl = helpers.addSource(cache, source,

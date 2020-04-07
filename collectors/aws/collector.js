@@ -222,7 +222,11 @@ var calls = {
         describeRouteTables: {
             property: 'RouteTables',
             paginate: 'NextToken'
-        }
+        },
+        describeTags: {
+            property: 'Tags',
+            paginate: 'NextToken',
+        },
     },
     ECR: {
         describeRepositories: {
@@ -349,6 +353,14 @@ var calls = {
             paginate: 'NextMarker',
             paginateReqProp: 'Marker'
         }
+    },
+    Organizations: {
+        describeOrganization: {
+            property: 'Organization',
+        },
+        listHandshakesForAccount: {
+            property: 'Handshakes',
+        },
     },
     RDS: {
         describeDBInstances: {
@@ -577,6 +589,11 @@ var postcalls = [
                 signatureVersion: 'v4',
                 override: true
             },
+            getBucketLocation: {
+                deleteRegion: true,
+                signatureVersion: 'v4',
+                override: true
+            },
             getPublicAccessBlock: {
                 deleteRegion: true,
                 signatureVersion: 'v4',
@@ -593,7 +610,7 @@ var postcalls = [
                 reliesOnService: 'ec2',
                 reliesOnCall: 'describeVpcs',
                 override: true
-            }
+            },
         },
         ECR: {
             getRepositoryPolicy: {
